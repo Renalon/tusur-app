@@ -1,6 +1,23 @@
-mkdir -p .github/workflows
-touch .github/workflows/main.yml
-echo "# GitHub Actions Workflow" > .github/workflows/main.yml
-git add .
-git commit -m "Добавлен файл для GitHub Actions"
-git push origin main  # или master, если у тебя старая ветка
+name: Deploy to Scalingo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Scalingo CLI
+        run: |
+          curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Login to Scalingo
+        run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
+
+      - name: Deploy to Scalingo
+        run: git push scalingo main
