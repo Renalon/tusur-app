@@ -1,0 +1,6 @@
+mkdir -p .github/workflows
+touch .github/workflows/main.yml
+echo "# GitHub Actions Workflow" > .github/workflows/main.yml
+git add .
+git commit -m "Добавлен файл для GitHub Actions"
+git push origin main  # или master, если у тебя старая ветка
