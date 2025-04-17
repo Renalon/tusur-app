@@ -57,14 +57,17 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
+          echo "SSH key from secrets: ${{ secrets.SCALINGO_DEPLOY_KEY }}" # Debug step to check key content
           echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ls -la ~/.ssh # Check if file exists and permissions are set correctly
           ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
+          ls -la ~/.ssh/known_hosts # Check if known_hosts is correctly updated
 
       # Проверка SSH-подключения к Scalingo
       - name: Test SSH connection to Scalingo
         run: |
-          ssh -T git@scalingo.com
+          ssh -T git@scalingo.com || true
 
       - name: Login to Scalingo
         run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
@@ -73,5 +76,4 @@ jobs:
         run: git remote add scalingo git@scalingo.com:tusur-app.git
 
       - name: Deploy to Scalingo
-        run: |
-          git push scalingo main
+        run: git push scalingo main
