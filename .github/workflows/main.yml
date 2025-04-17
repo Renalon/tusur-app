@@ -19,7 +19,8 @@ jobs:
       - name: Login to Scalingo
         run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
 
+      - name: Add Scalingo remote
+        run: git remote add scalingo git@scalingo.com:tusur-app.git
+
       - name: Deploy to Scalingo
-        run: |
-          run: git remote add scalingo git@scalingo.com:tusur-app.git
-          git push scalingo main
+        run: git push scalingo main
