@@ -19,8 +19,8 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
 
       - name: Login to Scalingo
