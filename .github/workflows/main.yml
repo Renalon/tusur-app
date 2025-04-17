@@ -61,6 +61,11 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
 
+      # Проверка SSH-подключения к Scalingo
+      - name: Test SSH connection to Scalingo
+        run: |
+          ssh -T git@scalingo.com
+
       - name: Login to Scalingo
         run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
 
@@ -68,4 +73,5 @@ jobs:
         run: git remote add scalingo git@scalingo.com:tusur-app.git
 
       - name: Deploy to Scalingo
-        run: git push scalingo main
+        run: |
+          git push scalingo main
