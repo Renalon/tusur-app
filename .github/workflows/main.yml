@@ -41,6 +41,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -57,17 +58,13 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "SSH key from secrets: ${{ secrets.SCALINGO_DEPLOY_KEY }}" # Debug step to check key content
           echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ls -la ~/.ssh # Check if file exists and permissions are set correctly
-          ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
-          ls -la ~/.ssh/known_hosts # Check if known_hosts is correctly updated
-
-      # Проверка SSH-подключения к Scalingo
-      - name: Test SSH connection to Scalingo
-        run: |
-          ssh -T git@scalingo.com || true
+          touch ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts || echo "⚠️ ssh-keyscan failed, continuing anyway"
+          echo "SSH key and known_hosts set up:"
+          ls -la ~/.ssh
 
       - name: Login to Scalingo
         run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
