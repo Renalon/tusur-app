@@ -31,6 +31,49 @@
 #
 #      - name: Deploy to Scalingo
 #        run: git push scalingo main
+#name: Deploy to Scalingo
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Install Scalingo CLI
+#        run: |
+#          curl -O https://cli-dl.scalingo.com/install && bash install
+#
+#      - name: Debug – check home dir
+#        run: |
+#          echo "HOME is: $HOME"
+#          ls -la $HOME
+#
+#      - name: Setup SSH key
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#          touch ~/.ssh/known_hosts
+#          chmod 644 ~/.ssh/known_hosts
+#          ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts || echo "⚠️ ssh-keyscan failed, continuing anyway"
+#          echo "SSH key and known_hosts set up:"
+#          ls -la ~/.ssh
+#
+#      - name: Login to Scalingo
+#        run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
+#
+#      - name: Add Scalingo remote
+#        run: git remote add scalingo git@scalingo.com:tusur-app.git
+#
+#      - name: Deploy to Scalingo
+#        run: git push scalingo main
 name: Deploy to Scalingo
 
 on:
@@ -46,31 +89,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Scalingo CLI
-        run: |
-          curl -O https://cli-dl.scalingo.com/install && bash install
-
-      - name: Debug – check home dir
-        run: |
-          echo "HOME is: $HOME"
-          ls -la $HOME
-
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          touch ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-          ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts || echo "⚠️ ssh-keyscan failed, continuing anyway"
-          echo "SSH key and known_hosts set up:"
-          ls -la ~/.ssh
-
-      - name: Login to Scalingo
-        run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
-
-      - name: Add Scalingo remote
-        run: git remote add scalingo git@scalingo.com:tusur-app.git
-
       - name: Deploy to Scalingo
-        run: git push scalingo main
+        uses: ./github/actions/scalingo-deploy
+        with:
+          ssh-private-key: ${{ secrets.SCALINGO_DEPLOY_KEY }}
+          app-name: tusur-app
+          known-host: ssh.osc-fr1.scalingo.com
