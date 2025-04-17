@@ -1,3 +1,36 @@
+#name: Deploy to Scalingo
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Install Scalingo CLI
+#        run: |
+#          curl -O https://cli-dl.scalingo.com/install && bash install
+#
+#      - name: Setup SSH key
+#        run: |
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#          ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
+#
+#      - name: Login to Scalingo
+#        run: scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
+#
+#      - name: Add Scalingo remote
+#        run: git remote add scalingo git@scalingo.com:tusur-app.git
+#
+#      - name: Deploy to Scalingo
+#        run: git push scalingo main
 name: Deploy to Scalingo
 
 on:
@@ -16,11 +49,16 @@ jobs:
         run: |
           curl -O https://cli-dl.scalingo.com/install && bash install
 
-      - name: Setup SSH key
+      - name: Debug – check home dir
+        run: |
+          echo "HOME is: $HOME"
+          ls -la $HOME
+
+      - name: Setup SSH key for Scalingo
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SCALINGO_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H scalingo.com >> ~/.ssh/known_hosts
 
       - name: Login to Scalingo
